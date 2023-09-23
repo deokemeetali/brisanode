@@ -4,22 +4,10 @@ const User = require('./models/usermodel');
 const Post = require('./models/postmodel');
 const Comment = require('./models/commentmodel');
 // const bcrypt = require('bcrypt');
-const { google } = require('googleapis');
-const OAuth2 = google.auth.OAuth2;
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const session = require('express-session');
 
-const oauth2Client = new OAuth2(
-  'http://166868863171-3jc87rbv266kcefu4f2jqjlhsqrbfm1p.apps.googleusercontent.com',
-  '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',
-  'https://frontend-x0qa.onrender.com'
-);
-
-
-const authUrl = oauth2Client.generateAuthUrl({
-  access_type: 'offline', 
-  scope: 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile', 
-});
-
-console.log('Authorization URL:', authUrl);
 
 
 
@@ -28,18 +16,6 @@ console.log('Authorization URL:', authUrl);
  const bodyparser=require('body-parser');
 
 const app = express();
-const CLIENT_ID = 'a4983694b057f9a8161f';
-const REDIRECT_URI = 'https://frontend-x0qa.onrender.com/callback/github'; 
-const SCOPES = 'user:email'; 
-
-
-app.get('/github-auth', (req, res) => {
-  
-  const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}`;
-
-
-  res.redirect(githubAuthUrl);
-});
 
 const PORT = process.env.PORT || 4000;
  const cors = require('cors');
@@ -115,6 +91,25 @@ connectDB()
 //     res.status(500).json({ error: "Failed to fetch posts" });
 //   }
 // });
+// var GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+    clientID: 'http://166868863171-3jc87rbv266kcefu4f2jqjlhsqrbfm1p.apps.googleusercontent.com',
+    clientSecret: "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GOCSPX-o49yVy9YDug_8C13GVr2vrA9mf4t",
+    callbackURL: "https://frontend-x0qa.onrender.com"
+  },
+  (accessToken, refreshToken, profile, done) => {
+    // Use the user's profile data to create or update a user in your database
+    // You can access profile.id, profile.displayName, profile.emails, etc.
+
+    // Call done() with the user object or an error if something goes wrong
+    if (error) {
+      return done(error);
+    }
+    return done(null, user);
+  }
+)
+);
 app.post('/users/register',async (req,res)=>{
   try{
     const {username,email,password}=req.body;
@@ -197,7 +192,19 @@ app.post('/api/posts/:postId/like', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+// app.get('/auth/google',
+//   passport.authenticate('google', { scope: ['profile'] }));
 
+
+  app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', {
+      successRedirect: '/mainpage', 
+      failureRedirect: '/login', 
+    })
+  );
 
 
 
