@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
     "googleapis": "^126.0.1",
     "mongodb": "^6.0.0",
     "mongoose": "^7.5.0",
