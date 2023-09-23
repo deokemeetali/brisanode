@@ -38,8 +38,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new GoogleStrategy({
-    clientID: 'http://166868863171-3jc87rbv266kcefu4f2jqjlhsqrbfm1p.apps.googleusercontent.com',
-    clientSecret: "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GOCSPX-o49yVy9YDug_8C13GVr2vrA9mf4t",
+    clientID: '166868863171-3jc87rbv266kcefu4f2jqjlhsqrbfm1p.apps.googleusercontent.com',
+    clientSecret: "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",
     callbackURL: "https://frontend-x0qa.onrender.com/auth/google/callback"
   },
   (accessToken, refreshToken, profile, done) => {
