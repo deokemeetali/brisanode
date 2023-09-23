@@ -23,86 +23,27 @@ const PORT = process.env.PORT || 4000;
  app.use(bodyparser.json())
  
 connectDB()
+const crypto = require('crypto');
 
 
-
-// mongoose.connect("mongodb://127.0.0.1:27017/BlogApp",{
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-// const PostModel = mongoose.model("blogdetails", {
-//   title: String,
-//   description: String,
-// });
-// const userSchema = new mongoose.Schema({
-//   username: String,
-//   password: String,
-//    lastLoginTime: String, 
-// });
-
-// const UserModel = mongoose.model('user_and_password', userSchema);
-
-// app.post("/api/posts", async (req, res) => {
-//   try {
-//     const { title, description } = req.body;
-
-   
-//     const newPost = new PostModel({ title, description });
-//     await newPost.save();
-
-//     res.status(201).json({ message: "Post saved successfully" });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ error: "Failed to save post" });
-//   }
-// });
+const sessionSecret = crypto.randomBytes(32).toString('hex');
+app.use(session({
+  secret: sessionSecret, 
+  resave: false,
+  saveUninitialized: true,
+}));
 
 
-
-// app.post('/login/v1', async (req, res) => {
-//   try {
-//     const { username, password } = req.body;
-//     const hashedPassword = await bcrypt.hash(password, 10); 
-//     const user = new UserModel({ username, password: hashedPassword });
-//     console.log("Received login request with username:", username, "and password:", password);
-//     console.log(user);
-
-
-//     if (user) {
-      
-//        user.lastLoginTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
-//        await user.save();
-
-//       res.json(user);
-//     } else {
-//       res.status(401).json({ error: 'Incorrect username or password' });
-//     }
-//   } catch (error) {
-//     console.error("Error during login:", error);
-//     res.status(500).json({ error: 'Could not fetch user' });
-//   }
-// });
-// app.get("/api/blogposts", async (req, res) => {
-//   try {
-//     const posts = await PostModel.find(); // Retrieve all posts from the collection
-//     res.json(posts);
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ error: "Failed to fetch posts" });
-//   }
-// });
-// var GoogleStrategy = require('passport-google-oauth20').Strategy;
+app.use(passport.initialize());
+app.use(passport.session());
 
 passport.use(new GoogleStrategy({
     clientID: 'http://166868863171-3jc87rbv266kcefu4f2jqjlhsqrbfm1p.apps.googleusercontent.com',
     clientSecret: "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GOCSPX-o49yVy9YDug_8C13GVr2vrA9mf4t",
-    callbackURL: "https://frontend-x0qa.onrender.com"
+    callbackURL: "https://frontend-x0qa.onrender.com/auth/google/callback"
   },
   (accessToken, refreshToken, profile, done) => {
-    // Use the user's profile data to create or update a user in your database
-    // You can access profile.id, profile.displayName, profile.emails, etc.
-
-    // Call done() with the user object or an error if something goes wrong
+   
     if (error) {
       return done(error);
     }
@@ -110,6 +51,12 @@ passport.use(new GoogleStrategy({
   }
 )
 );
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+passport.deserializeUser((obj, done) => {
+  done(null, obj);
+});
 app.post('/users/register',async (req,res)=>{
   try{
     const {username,email,password}=req.body;
@@ -192,8 +139,7 @@ app.post('/api/posts/:postId/like', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-// app.get('/auth/google',
-//   passport.authenticate('google', { scope: ['profile'] }));
+
 
 
   app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
