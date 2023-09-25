@@ -46,10 +46,39 @@ passport.use(new GoogleStrategy({
   function(accessToken, refreshToken, profile, done) {
     userProfile=profile;
     console.log("user profile :" + userProfile);
-    return done(null, userProfile);
-}
+    return done(null, userProfile); 
+     userProfile = profile;
+    console.log("user profile: " + userProfile);
 
+    // Check if the user already exists based on their Google ID
+    User.findOne({ googleId: userProfile.id }, async (err, existingUser) => {
+      if (err) {
+        return done(err);
+      }
+
+      if (existingUser) {
+        // User already exists, no need to create a new one
+        return done(null, existingUser);
+      }
+
+      // User doesn't exist, create a new user and save their Google ID
+      const newUser = new User({
+        googleId: userProfile.id,
+        // Other user data fields
+      });
+
+      try {
+        await newUser.save();
+        return done(null, newUser);
+      } catch (error) {
+        return done(error);
+      }
+    });
+  }
 ));
+
+
+
 passport.serializeUser((user, done) => {
   done(null, user);
 });
@@ -152,11 +181,34 @@ app.post('/api/posts/:postId/like', async (req, res) => {
   function(req, res) {
     // Successful authentication, redirect success.
     //res.redirect('/success');
-    const accessToken = req.user.accessToken; 
-    console.log(accessToken);
+    const accessToken = req.user.accessToken;
+  
+    req.session.accessToken = accessToken;
     res.send({ userProfile, accessToken });
   });
-
+  app.get('/api/checkAccessToken', async (req, res) => {
+    const accessToken = req.query.accessToken;
+  
+    // Implement your access token validation logic here
+    // For example, you can check if the accessToken is stored in your database
+    // and if it's valid, send a 200 response, else send an error response
+  
+    if (isValidAccessToken(accessToken)) {
+      // Access token is valid
+      // Here, you can use the user ID to authenticate the user
+      const user = await User.findOne({ googleId: userProfile.id });
+      if (user) {
+        // User is authenticated
+        res.status(200).json({ message: 'Access token is valid', user });
+      } else {
+        // User not found
+        res.status(401).json({ error: 'User not found' });
+      }
+    } else {
+      // Access token is invalid
+      res.status(401).json({ error: 'Invalid access token' });
+    }
+  });
   //app.get('/success', (req, res) => res.send(userProfile));
 
 

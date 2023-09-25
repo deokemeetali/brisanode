@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
   role:{ type: String, required: true },
+  googleId: {type: String},
 });
 
 const User = mongoose.model("user", userSchema);
