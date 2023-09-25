@@ -151,11 +151,11 @@ app.post('/api/posts/:postId/like', async (req, res) => {
     passport.authenticate('google', { failureRedirect: '/error' }),
   function(req, res) {
     // Successful authentication, redirect success.
-    res.redirect('/mainpage');
-    // res.send(userProfile)
+    //res.redirect('/success');
+    res.send(userProfile)
   });
 
-  app.get('/mainpage', (req, res) => res.send(userProfile));
+  //app.get('/success', (req, res) => res.send(userProfile));
 
 
 
