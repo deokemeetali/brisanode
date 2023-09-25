@@ -155,7 +155,7 @@ app.post('/api/posts/:postId/like', async (req, res) => {
     // res.send(userProfile)
   });
 
-  app.get('/success', (req, res) => res.send(userProfile));
+  app.get('/mainpage', (req, res) => res.send(userProfile));
 
 
 
