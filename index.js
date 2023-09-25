@@ -24,6 +24,7 @@ const PORT = process.env.PORT || 4000;
  
 connectDB()
 const crypto = require('crypto');
+var userProfile;
 
 
 const sessionSecret = crypto.randomBytes(32).toString('hex');
@@ -42,15 +43,12 @@ passport.use(new GoogleStrategy({
     clientSecret: "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",
     callbackURL: "https://frontend-x0qa.onrender.com/auth/google/callback"
   },
-  (accessToken, refreshToken, profile, done) => {
-   
-    if (error) {
-      return done(error);
-    }
-    return done(null, user);
-  }
-)
-);
+  function(accessToken, refreshToken, profile, done) {
+    userProfile=profile;
+    return done(null, userProfile);
+}
+
+));
 passport.serializeUser((user, done) => {
   done(null, user);
 });
@@ -144,14 +142,19 @@ app.post('/api/posts/:postId/like', async (req, res) => {
 
   app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-  app.get(
-    '/auth/google/callback',(req, res) => {
-      console.log('Callback request received:', req.query);
-    passport.authenticate('google', {
-      successRedirect: '/minpage', 
-      failureRedirect: '/', 
-    })
-   } );
+  app.get('/auth/google/callback',
+    // passport.authenticate('google', {
+    //   successRedirect: '/mainpage', 
+    //   failureRedirect: '/', 
+    // })
+    passport.authenticate('google', { failureRedirect: '/error' }),
+  function(req, res) {
+    // Successful authentication, redirect success.
+    res.redirect('/success');
+  });
+
+  app.get('/success', (req, res) => res.send(userProfile));
+
 
 
 
