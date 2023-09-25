@@ -152,7 +152,8 @@ app.post('/api/posts/:postId/like', async (req, res) => {
   function(req, res) {
     // Successful authentication, redirect success.
     //res.redirect('/success');
-    res.send(userProfile)
+    const accessToken = req.user.accessToken; 
+    res.send({ userProfile, accessToken });
   });
 
   //app.get('/success', (req, res) => res.send(userProfile));
