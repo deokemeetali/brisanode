@@ -148,7 +148,7 @@ app.post('/api/posts/:postId/like', async (req, res) => {
     '/auth/google/callback',(req, res) => {
       console.log('Callback request received:', req.query);
     passport.authenticate('google', {
-      successRedirect: '/', 
+      successRedirect: '/mainpage', 
       failureRedirect: '/', 
     })
    } );
