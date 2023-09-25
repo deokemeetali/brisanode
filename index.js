@@ -41,10 +41,11 @@ app.use(passport.session());
 passport.use(new GoogleStrategy({
     clientID: '166868863171-3jc87rbv266kcefu4f2jqjlhsqrbfm1p.apps.googleusercontent.com',
     clientSecret: "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",
-    callbackURL: "https://frontend-x0qa.onrender.com/auth/google/callback"
+    callbackURL: "https://blogapp-api-lxve.onrender.com/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
     userProfile=profile;
+    console.log("user profile :" + userProfile);
     return done(null, userProfile);
 }
 
@@ -150,10 +151,11 @@ app.post('/api/posts/:postId/like', async (req, res) => {
     passport.authenticate('google', { failureRedirect: '/error' }),
   function(req, res) {
     // Successful authentication, redirect success.
-    res.redirect('/success');
+    //res.redirect('/success');
+    res.send(userProfile)
   });
 
-  app.get('/success', (req, res) => res.send(userProfile));
+  //app.get('/success', (req, res) => res.send(userProfile));
 
 
 
