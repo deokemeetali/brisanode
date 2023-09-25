@@ -145,12 +145,13 @@ app.post('/api/posts/:postId/like', async (req, res) => {
   app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
   app.get(
-    '/auth/google/callback',
+    '/auth/google/callback',(req, res) => {
+      console.log('Callback request received:', req.query);
     passport.authenticate('google', {
-      successRedirect: '/mainpage', 
+      successRedirect: '/', 
       failureRedirect: '/', 
     })
-  );
+   } );
 
 
 
