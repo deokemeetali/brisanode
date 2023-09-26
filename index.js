@@ -7,7 +7,7 @@ const Comment = require('./models/commentmodel');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const session = require('express-session');
-
+const path = require('path');
 
 
 
@@ -55,6 +55,9 @@ passport.serializeUser((user, done) => {
 });
 passport.deserializeUser((obj, done) => {
   done(null, obj);
+});
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'https://frontend-x0qa.onrender.com', 'index.html'));
 });
 app.post('/users/register',async (req,res)=>{
   try{
