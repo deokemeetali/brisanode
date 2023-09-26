@@ -44,7 +44,7 @@ passport.use(new GoogleStrategy({
     callbackURL: "https://blogapp-api-lxve.onrender.com/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    userProfile=profile;
+    userProfile=profile.id;
     console.log("user profile :" + userProfile);
     return done(null, userProfile);
 }
