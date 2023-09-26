@@ -46,12 +46,10 @@ passport.use(new GoogleStrategy({
   function(accessToken, refreshToken, profile, done) {
     userProfile=profile;
     console.log("user profile :" + userProfile);
-    return done(null, userProfile); 
-    
-  }));
+    return done(null, userProfile);
+}
 
-
-
+));
 passport.serializeUser((user, done) => {
   done(null, user);
 });
@@ -146,32 +144,19 @@ app.post('/api/posts/:postId/like', async (req, res) => {
   app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
   app.get('/auth/google/callback',
-    
+    // passport.authenticate('google', {
+    //   successRedirect: '/mainpage', 
+    //   failureRedirect: '/', 
+    // })
     passport.authenticate('google', { failureRedirect: '/error' }),
   function(req, res) {
+    // Successful authentication, redirect success.
+    //res.redirect('/success');
     
-    const accessToken = req.user.accessToken;
-  
-    req.session.accessToken = accessToken;
-    res.send({ userProfile, accessToken });
+    res.send({ userProfile});
   });
-  app.get('/api/checkAccessToken', async (req, res) => {
-    const accessToken = req.query.accessToken;
-  console.log(accessToken);
-   
-  
-    
-      const user = await User.findOne({ googleId: accessToken });
-      if (user) {
-      
-        res.status(200).json({ message: 'Access token is valid', user });
-      } else {
-     
-        res.status(401).json({ error: 'User not found' });
-      }
-     
-  });
- 
+
+  //app.get('/success', (req, res) => res.send(userProfile));
 
 
 
