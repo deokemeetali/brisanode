@@ -56,6 +56,10 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((obj, done) => {
   done(null, obj);
 });
+app.get('/mainpage', (req, res) => {
+
+  res.json({ userProfile });
+});
 
 app.post('/users/register',async (req,res)=>{
   try{
@@ -151,9 +155,8 @@ app.post('/api/posts/:postId/like', async (req, res) => {
     // })
     passport.authenticate('google', { failureRedirect: '/error' }),
   function(req, res) {
-    // Successful authentication, redirect success.
-    //res.redirect('/success');
-    
+  
+  
     res.redirect('/mainpage');
   });
 
