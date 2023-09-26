@@ -45,8 +45,8 @@ passport.use(new GoogleStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
     userProfile=profile;
-    console.log("user profile :" + userProfile._id);
-    return done(null, userProfile._id);
+    console.log("user profile :" + userProfile);
+    return done(null, userProfile);
 }
 
 ));
@@ -144,10 +144,14 @@ app.post('/api/posts/:postId/like', async (req, res) => {
   app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
   app.get('/auth/google/callback',
-    
+    // passport.authenticate('google', {
+    //   successRedirect: '/mainpage', 
+    //   failureRedirect: '/', 
+    // })
     passport.authenticate('google', { failureRedirect: '/error' }),
   function(req, res) {
-    
+    // Successful authentication, redirect success.
+    //res.redirect('/success');
     
     res.send({ userProfile});
   });
